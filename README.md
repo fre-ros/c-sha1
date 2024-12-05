@@ -1,5 +1,4 @@
-# c-sha1
-![badge_test](https://github.com/fre-ros/c-sha1/actions/workflows/run_tests.yml/badge.svg)
+# c-sha1 ![badge_test](https://github.com/fre-ros/c-sha1/actions/workflows/run_tests.yml/badge.svg)
 
 [SHA1](https://en.wikipedia.org/wiki/SHA-1) library for C
 
