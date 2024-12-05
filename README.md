@@ -55,7 +55,7 @@ int main(void)
 ```
 
 ## API
-The strings returned from **sha1_to_string** must be freed by the caller.
+The string returned from **sha1_to_string** must be freed by the caller.
 ```c
 extern void sha1(const uint8_t *data, size_t size, uint32_t result[static 5U]);
 extern void sha1_init(sha1_ctx *ctx);
