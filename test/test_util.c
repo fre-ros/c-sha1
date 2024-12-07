@@ -35,6 +35,9 @@ static uint8_t hex_nibble_to_u8(char nibble)
       assert(0);
     }
   }
+
+  // Will never get here but compiler will warn
+  return 0;
 }
 
 static void convert_msg_hex_string_to_msg_data(struct test_data *test_data, const char *str)
