@@ -40,7 +40,8 @@ static void sha1_process(sha1_ctx *ctx)
 
   for (size_t i = 16U; i < 80U; i++)
   {
-    w[i] = LROTATE((w[i-3U] ^ w[i-8U] ^ w[i-14U] ^ w[i-16U]), 1U);
+    uint32_t rotate_temp = w[i-3U] ^ w[i-8U] ^ w[i-14U] ^ w[i-16U];
+    w[i] = LROTATE(rotate_temp, 1U);
   }
 
   uint32_t a = ctx->h[0U];
