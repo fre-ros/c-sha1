@@ -9,17 +9,18 @@
 
 static void sha1_test(const struct test_data *test)
 {
-  uint32_t hash[5];
+  uint8_t hash[20];
   sha1(test->msg, test->msg_length, hash);
   char *hash_string = sha1_to_string(hash);
 
+  assert(hash_string != NULL);
   assert(strcmp(hash_string, test->expected_hash) == 0);
   free(hash_string);
 }
 
 static void sha1_streaming_one_call_test(const struct test_data *test)
 {
-  uint32_t hash[5];
+  uint8_t hash[20];
 
   sha1_ctx ctx;
   sha1_init(&ctx);
@@ -27,13 +28,14 @@ static void sha1_streaming_one_call_test(const struct test_data *test)
   sha1_finalize(&ctx, hash);
 
   char *hash_string = sha1_to_string(hash);
+  assert(hash_string != NULL);
   assert(strcmp(hash_string, test->expected_hash) == 0);
   free(hash_string);
 }
 
 static void sha1_streaming_test(const struct test_data *test)
 {
-  uint32_t hash[5];
+  uint8_t hash[20];
 
   sha1_ctx ctx;
   sha1_init(&ctx);
@@ -46,6 +48,7 @@ static void sha1_streaming_test(const struct test_data *test)
   sha1_finalize(&ctx, hash);
 
   char *hash_string = sha1_to_string(hash);
+  assert(hash_string != NULL);
   assert(strcmp(hash_string, test->expected_hash) == 0);
   free(hash_string);
 }

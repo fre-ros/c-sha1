@@ -8,10 +8,18 @@
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
 #define LROTATE(n, r) (((n) << (r)) | ((n) >> (32U - (r))))
 
-#define UNPACK_U32_BE(arr, i) (((uint32_t)arr[i]    << 24U) | \
-                               ((uint32_t)arr[i+1U] << 16U) | \
-                               ((uint32_t)arr[i+2U] << 8U)  | \
-                               ((uint32_t)arr[i+3U] << 0U))
+#define UNPACK_U32_BE(arr, i) (((uint32_t)(arr)[(i)]    << 24U) | \
+                               ((uint32_t)(arr)[(i)+1U] << 16U) | \
+                               ((uint32_t)(arr)[(i)+2U] << 8U)  | \
+                               ((uint32_t)(arr)[(i)+3U] << 0U))
+
+#define PACK_U32_BE(arr, i, u32) do \
+  { \
+    (arr)[(i)+0U] = ((u32) >> 24U) & 0xFFU; \
+    (arr)[(i)+1U] = ((u32) >> 16U) & 0xFFU; \
+    (arr)[(i)+2U] = ((u32) >> 8U)  & 0xFFU; \
+    (arr)[(i)+3U] = ((u32) >> 0U)  & 0xFFU; \
+  } while (0)
 
 
 static const uint8_t zero_padding[64U] = {0U};
@@ -94,7 +102,7 @@ static void sha1_process(sha1_ctx *ctx)
   ctx->chunk_idx = 0U;
 }
 
-void sha1(const uint8_t *data, size_t size, uint32_t result[static 5U])
+void sha1(const uint8_t *data, size_t size, uint8_t result[static 20U])
 {
   sha1_ctx ctx;
   sha1_init(&ctx);
@@ -137,7 +145,7 @@ void sha1_feed(sha1_ctx *ctx, const uint8_t *data, size_t size)
   }
 }
 
-void sha1_finalize(sha1_ctx *ctx, uint32_t result[static 5U])
+void sha1_finalize(sha1_ctx *ctx, uint8_t result[static 20U])
 {
   uint64_t data_bit_length = ctx->msg_len * 8U;
   uint8_t data_bit_length_be_bytes[8U] =
@@ -160,28 +168,29 @@ void sha1_finalize(sha1_ctx *ctx, uint32_t result[static 5U])
 
   sha1_feed(ctx, data_bit_length_be_bytes, sizeof data_bit_length_be_bytes);
 
-  result[0U] = ctx->h[0U];
-  result[1U] = ctx->h[1U];
-  result[2U] = ctx->h[2U];
-  result[3U] = ctx->h[3U];
-  result[4U] = ctx->h[4U];
+  PACK_U32_BE(result, 0U, ctx->h[0U]);
+  PACK_U32_BE(result, 4U, ctx->h[1U]);
+  PACK_U32_BE(result, 8U, ctx->h[2U]);
+  PACK_U32_BE(result, 12U, ctx->h[3U]);
+  PACK_U32_BE(result, 16U, ctx->h[4U]);
 }
 
-char* sha1_to_string(const uint32_t hash[static 5U])
+char* sha1_to_string(const uint8_t hash[static 20U])
 {
-  /* 8 hex characters for every uint32_t and NULL terminator. */
-  size_t str_length = 8U * 5U + 1U;
+  /* 2 hex characters for every uint8_t and NULL terminator. */
+  size_t str_length = 2U * 20U + 1U;
 
   char *str = malloc(str_length * sizeof *str);
   if (str != NULL)
   {
-    int sprintf_res = sprintf(
-      str,
-      "%.8"PRIx32"%.8"PRIx32"%.8"PRIx32"%.8"PRIx32"%.8"PRIx32,
-      hash[0U], hash[1U], hash[2U], hash[3U], hash[4U]
+    int sprintf_res = sprintf(str,
+      "%.2"PRIx8"%.2"PRIx8"%.2"PRIx8"%.2"PRIx8"%.2"PRIx8"%.2"PRIx8"%.2"PRIx8"%.2"PRIx8"%.2"PRIx8"%.2"PRIx8
+      "%.2"PRIx8"%.2"PRIx8"%.2"PRIx8"%.2"PRIx8"%.2"PRIx8"%.2"PRIx8"%.2"PRIx8"%.2"PRIx8"%.2"PRIx8"%.2"PRIx8,
+      hash[0U], hash[1U], hash[2U], hash[3U], hash[4U], hash[5U], hash[6U], hash[7U], hash[8U], hash[9U],
+      hash[10U], hash[11U], hash[12U], hash[13U], hash[14U], hash[15U], hash[16U], hash[17U], hash[18U], hash[19U]
     );
 
-    if (sprintf_res < 0)
+    if (sprintf_res != 40)
     {
       free(str);
       str = NULL;
