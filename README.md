@@ -2,7 +2,7 @@
 
 [SHA1](https://en.wikipedia.org/wiki/SHA-1) library for C
 
-- Supports direct calculation and streaming protocol
+- Supports one call calculation and streaming protocol
 - Requires C99 or newer
 - Implementation verified against [NIST CAVP](https://csrc.nist.gov/Projects/Cryptographic-Algorithm-Validation-Program/Secure-Hashing) test vectors
 
