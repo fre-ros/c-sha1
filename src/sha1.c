@@ -1,9 +1,7 @@
 #include "sha1.h"
 
-#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <inttypes.h>
 
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
 #define LROTATE(n, r) (((n) << (r)) | ((n) >> (32U - (r))))
@@ -102,6 +100,24 @@ static void sha1_process(sha1_ctx *ctx)
   ctx->chunk_idx = 0U;
 }
 
+static char nibble_to_hex_char(uint8_t nibble)
+{
+  switch (nibble)
+  {
+    case 0x0: return '0'; case 0x1: return '1';
+    case 0x2: return '2'; case 0x3: return '3';
+    case 0x4: return '4'; case 0x5: return '5';
+    case 0x6: return '6'; case 0x7: return '7';
+    case 0x8: return '8'; case 0x9: return '9';
+    case 0xa: return 'a'; case 0xb: return 'b';
+    case 0xc: return 'c'; case 0xd: return 'd';
+    case 0xe: return 'e'; case 0xf: return 'f';
+  }
+
+  // Should never get here as long as the caller only passes a nibble.
+  return '0';
+}
+
 void sha1(const uint8_t *data, size_t size, uint8_t result[static 20U])
 {
   sha1_ctx ctx;
@@ -177,24 +193,21 @@ void sha1_finalize(sha1_ctx *ctx, uint8_t result[static 20U])
 
 char* sha1_to_string(const uint8_t hash[static 20U])
 {
+  size_t str_index = 0U;
+
   /* 2 hex characters for every uint8_t and NULL terminator. */
   size_t str_length = 2U * 20U + 1U;
 
   char *str = malloc(str_length * sizeof *str);
   if (str != NULL)
   {
-    int sprintf_res = sprintf(str,
-      "%.2"PRIx8"%.2"PRIx8"%.2"PRIx8"%.2"PRIx8"%.2"PRIx8"%.2"PRIx8"%.2"PRIx8"%.2"PRIx8"%.2"PRIx8"%.2"PRIx8
-      "%.2"PRIx8"%.2"PRIx8"%.2"PRIx8"%.2"PRIx8"%.2"PRIx8"%.2"PRIx8"%.2"PRIx8"%.2"PRIx8"%.2"PRIx8"%.2"PRIx8,
-      hash[0U], hash[1U], hash[2U], hash[3U], hash[4U], hash[5U], hash[6U], hash[7U], hash[8U], hash[9U],
-      hash[10U], hash[11U], hash[12U], hash[13U], hash[14U], hash[15U], hash[16U], hash[17U], hash[18U], hash[19U]
-    );
-
-    if (sprintf_res != 40)
+    for (size_t i = 0U; i < 20U; i++)
     {
-      free(str);
-      str = NULL;
+      str[str_index++] = nibble_to_hex_char(hash[i] >> 4U);
+      str[str_index++] = nibble_to_hex_char(hash[i] & 0xFU);
     }
+
+    str[str_index] = '\0';
   }
 
   return str;
