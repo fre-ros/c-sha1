@@ -41,8 +41,8 @@ int main(void)
 
   sha1_ctx ctx;
   sha1_init(&ctx);
-  sha1_feed(&ctx, (uint8_t*)msg_part_one, strlen(msg_part_one));
-  sha1_feed(&ctx, (uint8_t*)msg_part_two, strlen(msg_part_two));
+  sha1_process(&ctx, (uint8_t*)msg_part_one, strlen(msg_part_one));
+  sha1_process(&ctx, (uint8_t*)msg_part_two, strlen(msg_part_two));
   sha1_finalize(&ctx, hash);
   print_hash(hash);
 
@@ -59,7 +59,7 @@ The string returned from **sha1_to_string** must be freed by the caller.
 ```c
 extern void sha1(const uint8_t *data, size_t size, uint8_t result[static 20U]);
 extern void sha1_init(sha1_ctx *ctx);
-extern void sha1_feed(sha1_ctx *ctx, const uint8_t *data, size_t size);
+extern void sha1_process(sha1_ctx *ctx, const uint8_t *data, size_t size);
 extern void sha1_finalize(sha1_ctx *ctx, uint8_t result[static 20U]);
 extern char* sha1_to_string(const uint8_t hash[static 20U]);
 ```

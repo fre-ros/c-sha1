@@ -22,7 +22,7 @@
 
 static const uint8_t zero_padding[64U] = {0U};
 
-static void sha1_process(sha1_ctx *ctx)
+static void process(sha1_ctx *ctx)
 {
   uint32_t w[80U] =
   {
@@ -122,7 +122,7 @@ void sha1(const uint8_t *data, size_t size, uint8_t result[static 20U])
 {
   sha1_ctx ctx;
   sha1_init(&ctx);
-  sha1_feed(&ctx, data, size);
+  sha1_process(&ctx, data, size);
   sha1_finalize(&ctx, result);
 }
 
@@ -138,7 +138,7 @@ void sha1_init(sha1_ctx *ctx)
   ctx->h[4U] = 0xc3d2e1f0U;
 }
 
-void sha1_feed(sha1_ctx *ctx, const uint8_t *data, size_t size)
+void sha1_process(sha1_ctx *ctx, const uint8_t *data, size_t size)
 {
   uint32_t length_to_feed;
   uint32_t data_idx = 0U;
@@ -156,7 +156,7 @@ void sha1_feed(sha1_ctx *ctx, const uint8_t *data, size_t size)
 
     if (ctx->chunk_idx == 64U)
     {
-      sha1_process(ctx);
+      process(ctx);
     }
   }
 }
@@ -177,12 +177,12 @@ void sha1_finalize(sha1_ctx *ctx, uint8_t result[static 20U])
   };
 
   uint8_t one_bit_padding = 0x80U;
-  sha1_feed(ctx, &one_bit_padding, 1U);
+  sha1_process(ctx, &one_bit_padding, 1U);
 
   size_t padding_length = (ctx->chunk_idx > 56U) ? (56U + 64U - ctx->chunk_idx) : (56U - ctx->chunk_idx);
-  sha1_feed(ctx, zero_padding, padding_length);
+  sha1_process(ctx, zero_padding, padding_length);
 
-  sha1_feed(ctx, data_bit_length_be_bytes, sizeof data_bit_length_be_bytes);
+  sha1_process(ctx, data_bit_length_be_bytes, sizeof data_bit_length_be_bytes);
 
   PACK_U32_BE(result, 0U, ctx->h[0U]);
   PACK_U32_BE(result, 4U, ctx->h[1U]);

@@ -24,7 +24,7 @@ static void sha1_streaming_one_call_test(const struct test_data *test)
 
   sha1_ctx ctx;
   sha1_init(&ctx);
-  sha1_feed(&ctx, test->msg, test->msg_length);
+  sha1_process(&ctx, test->msg, test->msg_length);
   sha1_finalize(&ctx, hash);
 
   char *hash_string = sha1_to_string(hash);
@@ -42,7 +42,7 @@ static void sha1_streaming_test(const struct test_data *test)
 
   for (size_t i = 0; i < test->msg_length; i++)
   {
-    sha1_feed(&ctx, &test->msg[i], 1U);
+    sha1_process(&ctx, &test->msg[i], 1U);
   }
 
   sha1_finalize(&ctx, hash);
