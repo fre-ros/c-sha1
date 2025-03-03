@@ -102,20 +102,7 @@ static void process(sha1_ctx *ctx)
 
 static char nibble_to_hex_char(uint8_t nibble)
 {
-  switch (nibble)
-  {
-    case 0x0: return '0'; case 0x1: return '1';
-    case 0x2: return '2'; case 0x3: return '3';
-    case 0x4: return '4'; case 0x5: return '5';
-    case 0x6: return '6'; case 0x7: return '7';
-    case 0x8: return '8'; case 0x9: return '9';
-    case 0xa: return 'a'; case 0xb: return 'b';
-    case 0xc: return 'c'; case 0xd: return 'd';
-    case 0xe: return 'e'; case 0xf: return 'f';
-  }
-
-  // Should never get here as long as the caller only passes a nibble.
-  return '0';
+  return "0123456789abcdef"[nibble & 0xFU];
 }
 
 void sha1(const uint8_t *data, size_t size, uint8_t result[static 20U])
@@ -164,17 +151,6 @@ void sha1_process(sha1_ctx *ctx, const uint8_t *data, size_t size)
 void sha1_finalize(sha1_ctx *ctx, uint8_t result[static 20U])
 {
   uint64_t data_bit_length = ctx->msg_len * 8U;
-  uint8_t data_bit_length_be_bytes[8U] =
-  {
-    (data_bit_length >> 56U) & 0xFFU,
-    (data_bit_length >> 48U) & 0xFFU,
-    (data_bit_length >> 40U) & 0xFFU,
-    (data_bit_length >> 32U) & 0xFFU,
-    (data_bit_length >> 24U) & 0xFFU,
-    (data_bit_length >> 16U) & 0xFFU,
-    (data_bit_length >> 8U) & 0xFFU,
-    (data_bit_length >> 0U) & 0xFFU
-  };
 
   uint8_t one_bit_padding = 0x80U;
   sha1_process(ctx, &one_bit_padding, 1U);
@@ -182,6 +158,9 @@ void sha1_finalize(sha1_ctx *ctx, uint8_t result[static 20U])
   size_t padding_length = (ctx->chunk_idx > 56U) ? (56U + 64U - ctx->chunk_idx) : (56U - ctx->chunk_idx);
   sha1_process(ctx, zero_padding, padding_length);
 
+  uint8_t data_bit_length_be_bytes[8U];
+  PACK_U32_BE(data_bit_length_be_bytes, 0U, (uint32_t)(data_bit_length >> 32U));
+  PACK_U32_BE(data_bit_length_be_bytes, 4U, (uint32_t)(data_bit_length & 0xFFFFFFFFU));
   sha1_process(ctx, data_bit_length_be_bytes, sizeof data_bit_length_be_bytes);
 
   PACK_U32_BE(result, 0U, ctx->h[0U]);
