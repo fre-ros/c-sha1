@@ -52,7 +52,7 @@ static void convert_msg_hex_string_to_msg_data(struct test_data *test_data, cons
 
   for (size_t i = 0; i < str_length; i += 2)
   {
-    msg_data[i/2] = (hex_nibble_to_u8(str[i]) << 4) | hex_nibble_to_u8(str[i+1]);
+    msg_data[i/2] = (uint8_t)((hex_nibble_to_u8(str[i]) << 4) | hex_nibble_to_u8(str[i+1]));
   }
 
   test_data->msg = msg_data;

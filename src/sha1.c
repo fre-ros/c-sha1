@@ -127,8 +127,8 @@ void sha1_init(sha1_ctx *ctx)
 
 void sha1_process(sha1_ctx *ctx, const uint8_t *data, size_t size)
 {
-  uint32_t length_to_feed;
-  uint32_t data_idx = 0U;
+  size_t length_to_feed;
+  size_t data_idx = 0U;
 
   ctx->msg_len += size;
 
