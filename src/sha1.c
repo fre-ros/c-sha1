@@ -13,10 +13,10 @@
 
 #define PACK_U32_BE(arr, i, u32) do \
   { \
-    (arr)[(i)+0U] = ((u32) >> 24U) & 0xFFU; \
-    (arr)[(i)+1U] = ((u32) >> 16U) & 0xFFU; \
-    (arr)[(i)+2U] = ((u32) >> 8U)  & 0xFFU; \
-    (arr)[(i)+3U] = ((u32) >> 0U)  & 0xFFU; \
+    (arr)[(i)+0U] = (uint8_t)(((u32) >> 24U) & 0xFFU); \
+    (arr)[(i)+1U] = (uint8_t)(((u32) >> 16U) & 0xFFU); \
+    (arr)[(i)+2U] = (uint8_t)(((u32) >> 8U)  & 0xFFU); \
+    (arr)[(i)+3U] = (uint8_t)(((u32) >> 0U)  & 0xFFU); \
   } while (0)
 
 
