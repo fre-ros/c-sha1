@@ -7,15 +7,15 @@
 #include "sha1.h"
 #include "test_util.h"
 
+static char hash_string[41];
+
 static void sha1_test(const struct test_data *test)
 {
   uint8_t hash[20];
   sha1(test->msg, test->msg_length, hash);
-  char *hash_string = sha1_to_string(hash);
+  sha1_to_string_static(hash, hash_string);
 
-  assert(hash_string != NULL);
   assert(strcmp(hash_string, test->expected_hash) == 0);
-  free(hash_string);
 }
 
 static void sha1_streaming_one_call_test(const struct test_data *test)
@@ -27,10 +27,8 @@ static void sha1_streaming_one_call_test(const struct test_data *test)
   sha1_process(&ctx, test->msg, test->msg_length);
   sha1_finalize(&ctx, hash);
 
-  char *hash_string = sha1_to_string(hash);
-  assert(hash_string != NULL);
+  sha1_to_string_static(hash, hash_string);
   assert(strcmp(hash_string, test->expected_hash) == 0);
-  free(hash_string);
 }
 
 static void sha1_streaming_test(const struct test_data *test)
@@ -47,10 +45,8 @@ static void sha1_streaming_test(const struct test_data *test)
 
   sha1_finalize(&ctx, hash);
 
-  char *hash_string = sha1_to_string(hash);
-  assert(hash_string != NULL);
+  sha1_to_string_static(hash, hash_string);
   assert(strcmp(hash_string, test->expected_hash) == 0);
-  free(hash_string);
 }
 
 static void run_sha1_tests(struct test_data *tests, size_t number_of_tests, const char *test_name)

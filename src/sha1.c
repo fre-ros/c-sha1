@@ -170,24 +170,34 @@ void sha1_finalize(sha1_ctx *ctx, uint8_t result[static 20U])
   PACK_U32_BE(result, 16U, ctx->h[4U]);
 }
 
-char* sha1_to_string(const uint8_t hash[static 20U])
+static void hash_to_string(const uint8_t hash[static 20U], char dst[static 41U])
 {
   size_t str_index = 0U;
 
+  for (size_t i = 0U; i < 20U; i++)
+  {
+    dst[str_index++] = nibble_to_hex_char(hash[i] >> 4U);
+    dst[str_index++] = nibble_to_hex_char(hash[i] & 0xFU);
+  }
+
+  dst[str_index] = '\0';
+}
+
+char* sha1_to_string(const uint8_t hash[static 20U])
+{
   /* 2 hex characters for every uint8_t and NULL terminator. */
   size_t str_length = 2U * 20U + 1U;
 
   char *str = malloc(str_length * sizeof *str);
   if (str != NULL)
   {
-    for (size_t i = 0U; i < 20U; i++)
-    {
-      str[str_index++] = nibble_to_hex_char(hash[i] >> 4U);
-      str[str_index++] = nibble_to_hex_char(hash[i] & 0xFU);
-    }
-
-    str[str_index] = '\0';
+    hash_to_string(hash, str);
   }
 
   return str;
+}
+
+void sha1_to_string_static(const uint8_t hash[static 20U], char dst[static 41U])
+{
+  hash_to_string(hash, dst);
 }
