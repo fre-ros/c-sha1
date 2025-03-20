@@ -64,7 +64,7 @@ int main(void)
 ```
 
 ## API
-The string returned from **sha1_to_string** must be freed by the caller.
+The string returned from **sha1_to_string** must be freed by the caller.<br>
 Use **sha1_to_string_static** to create a string without allocation.
 ```c
 extern void sha1(const uint8_t *data, size_t size, uint8_t result[static 20U]);
