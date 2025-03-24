@@ -105,11 +105,11 @@ static char nibble_to_hex_char(uint8_t nibble)
   return "0123456789abcdef"[nibble & 0xFU];
 }
 
-static void hash_to_string(const uint8_t hash[static 20U], char dst[static 41U])
+static void hash_to_string(const uint8_t hash[static SHA1_HASH_LEN], char dst[static SHA1_STR_LEN])
 {
   size_t dst_index = 0U;
 
-  for (size_t i = 0U; i < 20U; i++)
+  for (size_t i = 0U; i < SHA1_HASH_LEN; i++)
   {
     dst[dst_index++] = nibble_to_hex_char(hash[i] >> 4U);
     dst[dst_index++] = nibble_to_hex_char(hash[i] & 0xFU);
@@ -118,7 +118,7 @@ static void hash_to_string(const uint8_t hash[static 20U], char dst[static 41U])
   dst[dst_index] = '\0';
 }
 
-void sha1(const uint8_t *data, size_t size, uint8_t result[static 20U])
+void sha1(const uint8_t *data, size_t size, uint8_t result[static SHA1_HASH_LEN])
 {
   sha1_ctx ctx;
   sha1_init(&ctx);
@@ -161,7 +161,7 @@ void sha1_process(sha1_ctx *ctx, const uint8_t *data, size_t size)
   }
 }
 
-void sha1_finalize(sha1_ctx *ctx, uint8_t result[static 20U])
+void sha1_finalize(sha1_ctx *ctx, uint8_t result[static SHA1_HASH_LEN])
 {
   uint64_t data_bit_length = ctx->msg_len * 8U;
 
@@ -183,10 +183,10 @@ void sha1_finalize(sha1_ctx *ctx, uint8_t result[static 20U])
   PACK_U32_BE(result, 16U, ctx->h[4U]);
 }
 
-char* sha1_to_string(const uint8_t hash[static 20U])
+char* sha1_to_str(const uint8_t hash[static SHA1_HASH_LEN])
 {
   /* 2 hex characters for every uint8_t and NULL terminator. */
-  size_t str_length = 2U * 20U + 1U;
+  size_t str_length = 2U * SHA1_HASH_LEN + 1U;
 
   char *str = malloc(str_length * sizeof *str);
   if (str != NULL)
@@ -197,7 +197,7 @@ char* sha1_to_string(const uint8_t hash[static 20U])
   return str;
 }
 
-void sha1_to_string_buffer(const uint8_t hash[static 20U], char dst[static 41U])
+void sha1_to_str_buffer(const uint8_t hash[static SHA1_HASH_LEN], char dst[static SHA1_STR_LEN])
 {
   hash_to_string(hash, dst);
 }
