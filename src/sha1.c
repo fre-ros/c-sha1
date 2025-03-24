@@ -105,7 +105,7 @@ static char nibble_to_hex_char(uint8_t nibble)
   return "0123456789abcdef"[nibble & 0xFU];
 }
 
-static void hash_to_string(const uint8_t hash[static SHA1_HASH_LEN], char dst[static SHA1_STR_LEN])
+static void hash_to_str(const uint8_t hash[static SHA1_HASH_LEN], char dst[static SHA1_STR_LEN])
 {
   size_t dst_index = 0U;
 
@@ -191,7 +191,7 @@ char* sha1_to_str(const uint8_t hash[static SHA1_HASH_LEN])
   char *str = malloc(str_length * sizeof *str);
   if (str != NULL)
   {
-    hash_to_string(hash, str);
+    hash_to_str(hash, str);
   }
 
   return str;
@@ -199,5 +199,5 @@ char* sha1_to_str(const uint8_t hash[static SHA1_HASH_LEN])
 
 void sha1_to_str_buffer(const uint8_t hash[static SHA1_HASH_LEN], char dst[static SHA1_STR_LEN])
 {
-  hash_to_string(hash, dst);
+  hash_to_str(hash, dst);
 }
