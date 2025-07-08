@@ -78,6 +78,7 @@ static void load_test_case(struct test_data *test_data, FILE *f)
   }
   else
   {
+    test_data->msg = NULL;
     test_data->msg_length = 0;
   }
 
