@@ -8,8 +8,8 @@
 #define SHA1_STR_LEN ((SHA1_HASH_LEN * 2U) + 1U)
 
 typedef struct {
-  size_t msg_len;
   size_t chunk_idx;
+  uint64_t msg_len;
   uint32_t h[5U];
   uint8_t chunk[64U];
 } sha1_ctx;
