@@ -185,8 +185,7 @@ void sha1_finalize(sha1_ctx *ctx, uint8_t result[static SHA1_HASH_LEN])
 
 char* sha1_to_str(const uint8_t hash[static SHA1_HASH_LEN])
 {
-  /* 2 hex characters for every uint8_t and NULL terminator. */
-  size_t str_length = 2U * SHA1_HASH_LEN + 1U;
+  size_t str_length = SHA1_STR_LEN;
 
   char *str = malloc(str_length * sizeof *str);
   if (str != NULL)
