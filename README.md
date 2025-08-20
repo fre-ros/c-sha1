@@ -36,11 +36,10 @@ static void print_hash_without_allocation(const uint8_t hash[SHA1_HASH_LEN])
 
 int main(void)
 {
-  const char *msg = "The quick brown fox jumps over the lazy dog.";
-
   uint8_t hash[SHA1_HASH_LEN];
 
   // Calculate hash in one call
+  const char *msg = "The quick brown fox jumps over the lazy dog.";
   sha1((const uint8_t*)msg, strlen(msg), hash);
   print_hash(hash);
 
