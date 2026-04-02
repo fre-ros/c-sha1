@@ -64,9 +64,6 @@ int main(void)
 ```
 
 ## API
-The string returned from **sha1_to_str** must be freed by the caller.
-<br>Use **sha1_to_str_buffer** to create a string without allocation.
-
 ```c
 /**
  * Compute SHA1 digest for a complete buffer.
