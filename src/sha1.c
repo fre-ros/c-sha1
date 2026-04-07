@@ -141,17 +141,16 @@ void sha1_init(sha1_ctx *ctx)
 void sha1_process(sha1_ctx *ctx, const uint8_t *data, size_t size)
 {
   size_t length_to_feed;
-  size_t data_idx = 0U;
 
   ctx->msg_len += size;
 
   while (size > 0U)
   {
     length_to_feed = MIN(size, 64U - ctx->chunk_idx);
-    memcpy(&ctx->chunk[ctx->chunk_idx], &data[data_idx], length_to_feed);
+    memcpy(&ctx->chunk[ctx->chunk_idx], data, length_to_feed);
 
     size -= length_to_feed;
-    data_idx += length_to_feed;
+    data += length_to_feed;
     ctx->chunk_idx += length_to_feed;
 
     if (ctx->chunk_idx == 64U)
