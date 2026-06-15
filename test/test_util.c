@@ -100,7 +100,19 @@ struct test_data* load_test_file(const char *filepath, size_t *number_of_tests)
 
   while (fgets(line_buffer, sizeof line_buffer, f) != NULL)
   {
-    if (sscanf(line_buffer, "[L = %zu]", number_of_tests) == 1)
+    if (strncmp(line_buffer, "Len = ", 6) == 0)
+    {
+      (*number_of_tests)++;
+    }
+  }
+
+  assert(*number_of_tests != 0);
+  rewind(f);
+
+  /* Find start of tests */
+  while (fgets(line_buffer, sizeof line_buffer, f) != NULL)
+  {
+    if (strncmp(line_buffer, "[L =", 4) == 0)
     {
       break;
     }
