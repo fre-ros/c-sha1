@@ -33,20 +33,34 @@ static void sha1_streaming_one_call_test(const struct test_data *test)
 
 static void sha1_streaming_test(const struct test_data *test)
 {
+  sha1_ctx ctx;
+  size_t data_left;
+  size_t chunk_size;
+  size_t len_to_process;
   uint8_t hash[SHA1_HASH_LEN];
 
-  sha1_ctx ctx;
-  sha1_init(&ctx);
+  size_t chunk_sizes[] = {
+    1U, 2U, 3U, 4U, 5U, 6U, 7U, 8U, 9U,
+    60U, 61U, 62U, 63U, 64U, 65U, 66U, 67U, 68U, 69U
+  };
 
-  for (size_t i = 0; i < test->msg_length; i++)
+  for (size_t chunk_size_idx = 0U; chunk_size_idx < (sizeof chunk_sizes / sizeof chunk_sizes[0U]); chunk_size_idx++)
   {
-    sha1_process(&ctx, &test->msg[i], 1U);
+    sha1_init(&ctx);
+    data_left = test->msg_length;
+    chunk_size = chunk_sizes[chunk_size_idx];
+
+    while (data_left > 0U)
+    {
+      len_to_process = (data_left >= chunk_size) ? chunk_size : data_left;
+      sha1_process(&ctx, &test->msg[test->msg_length - data_left], len_to_process);
+      data_left -= len_to_process;
+    }
+
+    sha1_finalize(&ctx, hash);
+    sha1_to_str_buffer(hash, hash_string);
+    assert(strcmp(hash_string, test->expected_hash) == 0);
   }
-
-  sha1_finalize(&ctx, hash);
-
-  sha1_to_str_buffer(hash, hash_string);
-  assert(strcmp(hash_string, test->expected_hash) == 0);
 }
 
 static void run_sha1_tests(struct test_data *tests, size_t number_of_tests, const char *test_name)
